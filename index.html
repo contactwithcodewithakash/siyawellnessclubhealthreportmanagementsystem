@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Siya Wellness Club - Health Report System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen auth-wrapper active">
+        <div class="auth-card glass-card">
+            <img src="logo.jpg" alt="Siya Wellness Club Logo" class="brand-logo" onerror="this.src='https://via.placeholder.com/150x150?text=Siya+Logo'">
+            <h1 class="auth-title">Siya Wellness Club</h1>
+            <p class="auth-subtitle">Health Report Management System</p>
+            
+            <form id="login-form">
+                <div class="form-group" style="text-align: left;">
+                    <label class="form-label">Username</label>
+                    <input type="text" id="login-username" class="form-control" placeholder="Enter username" autocomplete="username" required>
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label class="form-label">Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="login-password" class="form-control" placeholder="Enter password" autocomplete="current-password" required>
+                        <button type="button" class="toggle-password" id="toggle-pwd-btn">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    Login <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- OTP Screen -->
+    <div id="otp-screen" class="screen auth-wrapper">
+        <div class="auth-card glass-card">
+            <img src="logo.jpg" alt="Siya Wellness Club Logo" class="brand-logo" style="max-width: 100px;" onerror="this.src='https://via.placeholder.com/150x150?text=Siya+Logo'">
+            <h2 class="auth-title">Security Verification</h2>
+            <p class="auth-subtitle">Enter the 4-digit OTP sent to your device</p>
+            
+            <form id="otp-form">
+                <div class="otp-inputs">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Verify OTP <i class="fas fa-check-circle"></i>
+                </button>
+                <div style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.875rem;">
+                    Demo OTP is: 1992
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Container (Header + Content) -->
+    <div id="main-app" class="screen">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <img src="logo.jpg" alt="Logo" class="header-logo" onerror="this.src='https://via.placeholder.com/40x40?text=Logo'">
+                <h1 class="header-title">Siya Wellness Club</h1>
+            </div>
+            <div class="header-actions">
+                <button id="theme-toggle" class="icon-btn" title="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="logout-btn" class="icon-btn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Screen -->
+        <main id="dashboard-screen" class="app-container screen active">
+            <div class="dashboard-header">
+                <h2>Dashboard</h2>
+                <button id="btn-create-report" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> New Checkup
+                </button>
+            </div>
+            <div class="credit-card glass-card" id="credit-dashboard-card" style="margin-bottom: 2rem;">
+                <div class="credit-card-header">
+                    <h3><i class="fas fa-coins" style="color: #F59E0B;"></i> क्रेडिट डॅशबोर्ड</h3>
+                    <div class="credit-status" id="credit-status-badge">लोड होत आहे...</div>
+                </div>
+                <div class="credit-card-body">
+                    <div class="credit-stat">
+                        <div class="credit-label">उपलब्ध क्रेडिट्स</div>
+                        <div class="credit-value" id="stat-credits">--</div>
+                    </div>
+                    <div class="credit-stat">
+                        <div class="credit-label">एकूण तयार झालेले अहवाल</div>
+                        <div class="credit-value" id="stat-credit-total">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card glass-card">
+                    <div class="stat-icon"><i class="fas fa-file-medical"></i></div>
+                    <div class="stat-content">
+                        <h3>Total Reports</h3>
+                        <div class="stat-value" id="stat-total">0</div>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                    <div class="stat-content">
+                        <h3>Today's Reports</h3>
+                        <div class="stat-value" id="stat-today">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reports-section">
+                <div class="reports-header">
+                    <h3>Recent Reports</h3>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-input" class="form-control" placeholder="Search by Name or Mobile...">
+                    </div>
+                </div>
+                <div class="reports-list" id="reports-list-container">
+                    <!-- Reports will be injected here via JS -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Form Screen -->
+        <main id="form-screen" class="app-container screen">
+            <div class="dashboard-header">
+                <h2><button class="icon-btn" id="btn-back-dashboard" style="display:inline-flex; margin-right:0.5rem;"><i class="fas fa-arrow-left"></i></button> New Health Checkup</h2>
+            </div>
+            
+            <form id="health-form">
+                <div class="form-section">
+                    <h3 class="form-section-title">Personal Information / वैयक्तिक माहिती</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="f-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mobile Number</label>
+                            <input type="tel" id="f-mobile" class="form-control" pattern="[0-9]{10}" maxlength="10" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" placeholder="10-digit number" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Age</label>
+                            <input type="number" id="f-age" class="form-control" min="1" max="120" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Gender</label>
+                            <select id="f-gender" class="form-control" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Camp Location</label>
+                            <input type="text" id="f-location" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Camp Date</label>
+                            <input type="date" id="f-date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Coordinator Name</label>
+                            <select id="f-coordinator" class="form-control" required>
+                                <option value="COACH CHHAYA GAIKWAD">COACH CHHAYA GAIKWAD</option>
+                                <option value="Siya Wellness Club">Siya Wellness Club</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">Health Parameters / आरोग्य मापदंड</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Height (cm)</label>
+                            <input type="number" id="f-height" class="form-control param-input" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Weight (kg)</label>
+                            <input type="number" id="f-weight" class="form-control param-input" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">BMI (Auto-calculated)</label>
+                            <input type="number" id="f-bmi" class="form-control" readonly style="background-color: var(--bg-color);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Total Fat %</label>
+                            <input type="number" id="f-totalfat" class="form-control param-input" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Visceral Fat %</label>
+                            <input type="number" id="f-visceralfat" class="form-control param-input" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Resting Metabolism (kcal)</label>
+                            <input type="number" id="f-metabolism" class="form-control param-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Body Metabolic Age</label>
+                            <input type="number" id="f-metabolicage" class="form-control param-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Trunk Subcutaneous Fat %</label>
+                            <input type="number" id="f-trunkfat" class="form-control param-input" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Skeletal Muscle %</label>
+                            <input type="number" id="f-muscle" class="form-control param-input" step="0.1" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="btn-cancel-form" class="btn btn-outline">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Generate Report <i class="fas fa-magic"></i></button>
+                    </div>
+                </div>
+            </form>
+        </main>
+
+        <!-- Report Preview Screen -->
+        <main id="preview-screen" class="app-container screen">
+            <div class="dashboard-header">
+                <h2><button class="icon-btn" id="btn-back-form" style="display:inline-flex; margin-right:0.5rem;"><i class="fas fa-arrow-left"></i></button> Report Preview</h2>
+            </div>
+            
+            <div class="preview-actions">
+                <button id="btn-download-pdf" class="btn btn-primary">
+                    <i class="fas fa-file-pdf"></i> Download Premium PDF
+                </button>
+                <button id="btn-share-whatsapp" class="btn btn-primary" style="background: linear-gradient(135deg, #25D366, #128C7E);">
+                    <i class="fab fa-whatsapp"></i> Share on WhatsApp
+                </button>
+                <button id="btn-save-dashboard" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Save & Go to Dashboard
+                </button>
+            </div>
+
+            <!-- The element to be printed to PDF -->
+            <div id="print-area">
+                <div class="report-preview-container">
+                    <div class="report-header">
+                        <img src="logo.jpg" alt="Siya Wellness Club" class="report-header-logo" onerror="this.src='https://via.placeholder.com/200x80?text=Siya+Wellness+Club'">
+                        <h1>आरोग्य तपासणी अहवाल</h1>
+                        <div class="report-date" id="p-date-display">Date: --</div>
+                    </div>
+
+                    <div class="report-info-section" style="margin-bottom: 2rem;">
+                        <h3>वैयक्तिक माहिती (Personal Info)</h3>
+                        <div class="info-row"><div class="info-label">नाव:</div> <div class="info-value" id="p-name">--</div></div>
+                        <div class="info-row"><div class="info-label">मोबाईल नंबर:</div> <div class="info-value" id="p-mobile">--</div></div>
+                        <div class="info-row"><div class="info-label">वय / लिंग:</div> <div class="info-value" id="p-age-gender">--</div></div>
+                        <div class="info-row"><div class="info-label">उंची / वजन:</div> <div class="info-value" id="p-height-weight">--</div></div>
+                        <div class="info-row"><div class="info-label">शिबिराचे ठिकाण:</div> <div class="info-value" id="p-location">--</div></div>
+                    </div>
+
+                    <div class="report-info-section">
+                        <div style="background-color: #dcfce7; padding: 0.75rem 1rem; border-radius: 4px; margin-bottom: 1rem;">
+                            <h3 style="color: #166534; margin: 0; font-size: 1.1rem;">Health Parameters</h3>
+                        </div>
+                        <table class="parameters-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Your Result</th>
+                                    <th>Normal Range</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="p-params-tbody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="health-score-section">
+                        <div class="score-card">
+                            <h3 style="color: #1F2937; margin-bottom: 1rem; font-size: 1rem;">Health Score</h3>
+                            <div class="score-circle">
+                                <div id="p-score">0</div>
+                                <small>/ 100</small>
+                            </div>
+                            <div class="risk-badge" id="p-status">--</div>
+                        </div>
+
+                        <div class="recommendations">
+                            <h3 style="color: #1F2937; margin-bottom: 1rem; font-size: 1rem;">Personalized Recommendations</h3>
+                            <ul class="recommendations-list" id="p-recommendations">
+                                <!-- Populated by JS -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="report-footer">
+                        <div class="contact-box" style="text-align: left; color: #1F2937;">
+                            <div style="font-weight: 600; font-size: 1.1rem; color: var(--dark-green); margin-bottom: 0.25rem;">संपर्क (Contact):</div>
+                            <div style="font-weight: 700; font-size: 1.25rem;"><i class="fas fa-phone-alt" style="color: var(--primary-green); margin-right: 0.5rem;"></i>8830012072</div>
+                        </div>
+                        <div class="signature-box">
+                            <div class="signature-line"></div>
+                            <div style="font-weight:600;" id="p-coordinator">--</div>
+                            <div style="font-size:0.875rem; color:#6B7280;">Coordinator</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- No Credits Modal -->
+    <div id="no-credits-modal" class="modal-overlay">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3>⚠️ क्रेडिट्स संपले आहेत</h3>
+            </div>
+            <div class="modal-body">
+                <p class="modal-main-text">आपले उपलब्ध क्रेडिट्स संपले आहेत.</p>
+                <p>नवीन आरोग्य अहवाल तयार करण्यासाठी कृपया नवीन क्रेडिट पॅक सक्रिय करा.</p>
+                <p>अधिक माहितीसाठी किंवा क्रेडिट पॅक खरेदीसाठी आमच्याशी संपर्क साधा.</p>
+                <p class="modal-thanks">धन्यवाद 🙏</p>
+                
+                <div class="credit-packages">
+                    <div class="pkg"><span>Setup Package</span> <span>50 Credits Included</span></div>
+                    <div class="pkg"><span>Starter Pack</span> <span>100 Credits</span></div>
+                    <div class="pkg"><span>Growth Pack</span> <span>300 Credits</span></div>
+                    <div class="pkg"><span>Premium Pack</span> <span>700 Credits</span></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-whatsapp-admin" class="btn btn-primary whatsapp-btn">
+                    📞 संपर्क साधा
+                </button>
+                <button id="btn-close-modal" class="btn btn-outline">
+                    ❌ बंद करा
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div style="font-weight: 600; color: var(--dark-green);" id="loading-text">Processing...</div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Using NEW SIYA WELLNESS keys
+        const supabaseUrl = 'https://zqjtnjeymncgzvvvktaj.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxanRuamV5bW5jZ3p2dnZrdGFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTUxODcsImV4cCI6MjA5NjEzMTE4N30.jiddkSTPT5vqNA7Bha9Y4rcuEXVohcIrqJmx6g54YtY';
+        window.supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+    </script>
+    <script src="js/logoBase64.js?v=211"></script>
+    <script src="js/main.js?v=211"></script>
+</body>
+</html>
