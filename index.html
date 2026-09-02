@@ -12,7 +12,6 @@
     <!-- Login Screen -->
     <div id="login-screen" class="screen auth-wrapper active">
         <div class="auth-card glass-card">
-            <img src="logo.jpg" alt="Siya Wellness Club Logo" class="brand-logo" onerror="this.src='https://via.placeholder.com/150x150?text=Siya+Logo'">
             <h1 class="auth-title">Siya Wellness Club</h1>
             <p class="auth-subtitle">Health Report Management System</p>
             
@@ -40,7 +39,6 @@
     <!-- OTP Screen -->
     <div id="otp-screen" class="screen auth-wrapper">
         <div class="auth-card glass-card">
-            <img src="logo.jpg" alt="Siya Wellness Club Logo" class="brand-logo" style="max-width: 100px;" onerror="this.src='https://via.placeholder.com/150x150?text=Siya+Logo'">
             <h2 class="auth-title">Security Verification</h2>
             <p class="auth-subtitle">Enter the 4-digit OTP sent to your device</p>
             
@@ -66,7 +64,6 @@
         <!-- Header -->
         <header class="app-header">
             <div class="header-brand">
-                <img src="logo.jpg" alt="Logo" class="header-logo" onerror="this.src='https://via.placeholder.com/40x40?text=Logo'">
                 <h1 class="header-title">Siya Wellness Club</h1>
             </div>
             <div class="header-actions">
@@ -177,6 +174,7 @@
                             <label class="form-label">Coordinator Name</label>
                             <select id="f-coordinator" class="form-control" required>
                                 <option value="COACH CHHAYA GAIKWAD">COACH CHHAYA GAIKWAD</option>
+                                <option value="COACH MANDA JAIBAHAR">COACH MANDA JAIBAHAR</option>
                                 <option value="Siya Wellness Club">Siya Wellness Club</option>
                             </select>
                         </div>
@@ -254,7 +252,7 @@
             <div id="print-area">
                 <div class="report-preview-container">
                     <div class="report-header">
-                        <img src="logo.jpg" alt="Siya Wellness Club" class="report-header-logo" onerror="this.src='https://via.placeholder.com/200x80?text=Siya+Wellness+Club'">
+                        <h2 style="color: var(--dark-green); margin-bottom: 0.5rem; font-size: 1.75rem;">Siya Wellness Club</h2>
                         <h1>आरोग्य तपासणी अहवाल</h1>
                         <div class="report-date" id="p-date-display">Date: --</div>
                     </div>
@@ -307,11 +305,7 @@
                         </div>
                     </div>
 
-                    <div class="report-footer">
-                        <div class="contact-box" style="text-align: left; color: #1F2937;">
-                            <div style="font-weight: 600; font-size: 1.1rem; color: var(--dark-green); margin-bottom: 0.25rem;">संपर्क (Contact):</div>
-                            <div style="font-weight: 700; font-size: 1.25rem;"><i class="fas fa-phone-alt" style="color: var(--primary-green); margin-right: 0.5rem;"></i>8830012072</div>
-                        </div>
+                    <div class="report-footer" style="justify-content: flex-end;">
                         <div class="signature-box">
                             <div class="signature-line"></div>
                             <div style="font-weight:600;" id="p-coordinator">--</div>
