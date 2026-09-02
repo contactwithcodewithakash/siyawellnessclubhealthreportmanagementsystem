@@ -604,21 +604,33 @@ const PDFManager = {
                 onclone: (clonedDoc) => {
                     const clonedReport = clonedDoc.getElementById('print-area');
                     if (clonedReport) {
-                        clonedReport.style.background = 'white'; // White looks best for printing
+                        clonedReport.style.background = 'white';
                         
                         const innerContainer = clonedReport.querySelector('.report-preview-container');
                         if (innerContainer) {
-                            // Force desktop width for PDF generation on mobile
                             innerContainer.style.width = '800px';
                             innerContainer.style.maxWidth = '800px';
                             innerContainer.style.margin = '0 auto';
-                            innerContainer.style.padding = '3rem'; // Desktop padding
+                            innerContainer.style.padding = '2rem 3rem'; // Slightly more compact
                         }
                         
-                        // Use base64 logo to avoid CORS issues in canvas
-                        const logoImg = clonedReport.querySelector('.report-header-logo');
-                        if (logoImg && typeof LOGO_BASE64 !== 'undefined') {
-                            logoImg.src = LOGO_BASE64;
+                        // Make Health Score and Recommendations side-by-side to save height
+                        const healthScoreSection = clonedReport.querySelector('.health-score-section');
+                        if (healthScoreSection) {
+                            healthScoreSection.style.display = 'flex';
+                            healthScoreSection.style.alignItems = 'center';
+                            healthScoreSection.style.gap = '2rem';
+                        }
+                        const scoreCard = clonedReport.querySelector('.score-card');
+                        if (scoreCard) scoreCard.style.flex = '0 0 200px';
+                        
+                        const recommendations = clonedReport.querySelector('.recommendations');
+                        if (recommendations) recommendations.style.flex = '1';
+
+                        const headerLogo = clonedReport.querySelector('.report-header-logo');
+                        if (headerLogo && typeof LOGO_BASE64 !== 'undefined') {
+                            headerLogo.src = LOGO_BASE64;
+                            headerLogo.style.height = '60px'; // Compact logo
                         }
                     }
                 }
@@ -627,18 +639,24 @@ const PDFManager = {
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
             const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const imgHeight = (canvas.height * pdfWidth) / canvas.width;
             
-            // Calculate ratio to fit exactly within one A4 page
-            const ratio = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
-            const finalWidth = canvas.width * ratio;
-            const finalHeight = canvas.height * ratio;
+            let heightLeft = imgHeight;
+            let position = 0;
             
-            // Center it horizontally and align top vertically
-            const marginX = (pdfWidth - finalWidth) / 2;
-            const marginY = 0; // Better to align top than center vertically for reports
+            // Add first page
+            pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+            heightLeft -= pageHeight;
             
-            pdf.addImage(imgData, 'JPEG', marginX, marginY, finalWidth, finalHeight);
+            // Add extra pages if the report is very long
+            while (heightLeft > 0) {
+                position -= pageHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            
             return pdf;
 
         } catch (error) {
