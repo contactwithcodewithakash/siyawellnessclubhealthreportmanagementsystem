@@ -627,9 +627,18 @@ const PDFManager = {
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
             const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            const pdfHeight = pdf.internal.pageSize.getHeight();
             
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            // Calculate ratio to fit exactly within one A4 page
+            const ratio = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
+            const finalWidth = canvas.width * ratio;
+            const finalHeight = canvas.height * ratio;
+            
+            // Center it horizontally and align top vertically
+            const marginX = (pdfWidth - finalWidth) / 2;
+            const marginY = 0; // Better to align top than center vertically for reports
+            
+            pdf.addImage(imgData, 'JPEG', marginX, marginY, finalWidth, finalHeight);
             return pdf;
 
         } catch (error) {
