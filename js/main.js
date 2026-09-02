@@ -624,11 +624,7 @@ const PDFManager = {
                             header.style.marginBottom = '1rem';
                             header.style.paddingBottom = '0.5rem';
                         }
-                        const logoImg = clonedReport.querySelector('.report-header-logo');
-                        if (logoImg && typeof LOGO_BASE64 !== 'undefined') {
-                            logoImg.src = LOGO_BASE64;
-                            logoImg.style.marginBottom = '0.5rem';
-                        }
+                        // Logo has been removed, so no need to process it
                         const footer = clonedReport.querySelector('.report-footer');
                         if (footer) {
                             footer.style.marginTop = '1.5rem';
@@ -796,7 +792,6 @@ const PDFManager = {
 // =========================================================================
 const App = {
     init() {
-        this.replaceLogo();
         this.initTheme();
         this.checkAuth();
         this.attachEventListeners();
@@ -807,15 +802,7 @@ const App = {
         CreditManager.init();
     },
 
-    replaceLogo() {
-        if (typeof LOGO_BASE64 !== 'undefined') {
-            document.querySelectorAll('img').forEach(img => {
-                if (img.getAttribute('src') === 'logo.jpg' || img.src.includes('logo.jpg')) {
-                    img.src = LOGO_BASE64;
-                }
-            });
-        }
-    },
+
 
     attachEventListeners() {
         const themeToggle = document.getElementById('theme-toggle');
