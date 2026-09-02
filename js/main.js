@@ -593,30 +593,6 @@ const PDFManager = {
 
     async createPDFDocument() {
         const reportElement = document.getElementById('print-area');
-        const innerContainer = reportElement.querySelector('.report-preview-container');
-        
-        // Use base64 logo to avoid CORS issues in canvas
-        const logoImg = document.querySelector('.report-header-logo');
-        const originalSrc = logoImg ? logoImg.src : null;
-        if (logoImg && typeof LOGO_BASE64 !== 'undefined') {
-            logoImg.src = LOGO_BASE64;
-        }
-
-        // Apply specific PDF styling overrides
-        const originalBg = reportElement.style.background;
-        const originalWidth = innerContainer ? innerContainer.style.width : '';
-        const originalMaxWidth = innerContainer ? innerContainer.style.maxWidth : '';
-        const originalMargin = innerContainer ? innerContainer.style.margin : '';
-        
-        reportElement.style.background = 'white'; // White looks best for printing
-        reportElement.classList.add('pdf-mode');
-        
-        // Force desktop width for PDF generation on mobile
-        if (innerContainer) {
-            innerContainer.style.width = '800px';
-            innerContainer.style.maxWidth = '800px';
-            innerContainer.style.margin = '0 auto';
-        }
 
         try {
             const canvas = await html2canvas(reportElement, {
@@ -624,7 +600,28 @@ const PDFManager = {
                 useCORS: true,
                 logging: false,
                 scrollY: 0,
-                windowWidth: 800 // Trick html2canvas into thinking the window is wide
+                windowWidth: 800,
+                onclone: (clonedDoc) => {
+                    const clonedReport = clonedDoc.getElementById('print-area');
+                    if (clonedReport) {
+                        clonedReport.style.background = 'white'; // White looks best for printing
+                        
+                        const innerContainer = clonedReport.querySelector('.report-preview-container');
+                        if (innerContainer) {
+                            // Force desktop width for PDF generation on mobile
+                            innerContainer.style.width = '800px';
+                            innerContainer.style.maxWidth = '800px';
+                            innerContainer.style.margin = '0 auto';
+                            innerContainer.style.padding = '3rem'; // Desktop padding
+                        }
+                        
+                        // Use base64 logo to avoid CORS issues in canvas
+                        const logoImg = clonedReport.querySelector('.report-header-logo');
+                        if (logoImg && typeof LOGO_BASE64 !== 'undefined') {
+                            logoImg.src = LOGO_BASE64;
+                        }
+                    }
+                }
             });
 
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
@@ -635,16 +632,9 @@ const PDFManager = {
             pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
             return pdf;
 
-        } finally {
-            // Restore styling
-            if (logoImg && originalSrc) logoImg.src = originalSrc;
-            reportElement.style.background = originalBg;
-            reportElement.classList.remove('pdf-mode');
-            if (innerContainer) {
-                innerContainer.style.width = originalWidth;
-                innerContainer.style.maxWidth = originalMaxWidth;
-                innerContainer.style.margin = originalMargin;
-            }
+        } catch (error) {
+            console.error("PDF Generation Error:", error);
+            throw error;
         }
     },
 
