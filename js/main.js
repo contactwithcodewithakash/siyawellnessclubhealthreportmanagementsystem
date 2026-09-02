@@ -593,6 +593,7 @@ const PDFManager = {
 
     async createPDFDocument() {
         const reportElement = document.getElementById('print-area');
+        const innerContainer = reportElement.querySelector('.report-preview-container');
         
         // Use base64 logo to avoid CORS issues in canvas
         const logoImg = document.querySelector('.report-header-logo');
@@ -603,15 +604,27 @@ const PDFManager = {
 
         // Apply specific PDF styling overrides
         const originalBg = reportElement.style.background;
-        reportElement.style.background = 'var(--glass-bg)';
+        const originalWidth = innerContainer ? innerContainer.style.width : '';
+        const originalMaxWidth = innerContainer ? innerContainer.style.maxWidth : '';
+        const originalMargin = innerContainer ? innerContainer.style.margin : '';
+        
+        reportElement.style.background = 'white'; // White looks best for printing
         reportElement.classList.add('pdf-mode');
+        
+        // Force desktop width for PDF generation on mobile
+        if (innerContainer) {
+            innerContainer.style.width = '800px';
+            innerContainer.style.maxWidth = '800px';
+            innerContainer.style.margin = '0 auto';
+        }
 
         try {
             const canvas = await html2canvas(reportElement, {
                 scale: 2,
                 useCORS: true,
                 logging: false,
-                scrollY: 0
+                scrollY: 0,
+                windowWidth: 800 // Trick html2canvas into thinking the window is wide
             });
 
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
@@ -627,6 +640,11 @@ const PDFManager = {
             if (logoImg && originalSrc) logoImg.src = originalSrc;
             reportElement.style.background = originalBg;
             reportElement.classList.remove('pdf-mode');
+            if (innerContainer) {
+                innerContainer.style.width = originalWidth;
+                innerContainer.style.maxWidth = originalMaxWidth;
+                innerContainer.style.margin = originalMargin;
+            }
         }
     },
 
