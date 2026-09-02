@@ -592,46 +592,56 @@ const PDFManager = {
     },
 
     async createPDFDocument() {
-        const reportElement = document.getElementById('print-area');
+        const originalElement = document.getElementById('print-area');
+        
+        // Create an off-screen container that bypasses mobile viewport restrictions
+        const offScreenContainer = document.createElement('div');
+        offScreenContainer.style.position = 'absolute';
+        offScreenContainer.style.top = '0';
+        offScreenContainer.style.left = '0';
+        offScreenContainer.style.width = '800px';
+        offScreenContainer.style.zIndex = '-9999'; // Render behind everything so user doesn't see it
+        offScreenContainer.style.background = 'white';
+        
+        // Clone the report element
+        const clone = originalElement.cloneNode(true);
+        offScreenContainer.appendChild(clone);
+        document.body.appendChild(offScreenContainer);
 
         try {
-            const canvas = await html2canvas(reportElement, {
+            // Apply desktop styling to the clone
+            const innerContainer = clone.querySelector('.report-preview-container');
+            if (innerContainer) {
+                innerContainer.style.width = '800px';
+                innerContainer.style.maxWidth = '800px';
+                innerContainer.style.margin = '0';
+                innerContainer.style.padding = '2rem 3rem'; // Compact vertical padding, normal horizontal
+                innerContainer.style.boxShadow = 'none'; // No shadow for PDF
+            }
+            
+            // Tighten margins so the report isn't overly tall
+            clone.querySelectorAll('.report-info-section, .parameters-table, .recommendations-section').forEach(el => {
+                el.style.marginBottom = '1.25rem';
+            });
+            const header = clone.querySelector('.report-header');
+            if (header) {
+                header.style.marginBottom = '1.25rem';
+                header.style.paddingBottom = '0.5rem';
+            }
+            const footer = clone.querySelector('.report-footer');
+            if (footer) {
+                footer.style.marginTop = '1.5rem';
+                footer.style.paddingTop = '1rem';
+            }
+
+            // Generate canvas from the off-screen clone (unclipped)
+            const canvas = await html2canvas(clone, {
                 scale: 2,
                 useCORS: true,
                 logging: false,
                 scrollY: 0,
                 windowWidth: 800,
-                onclone: (clonedDoc) => {
-                    const clonedReport = clonedDoc.getElementById('print-area');
-                    if (clonedReport) {
-                        clonedReport.style.background = 'white'; // White looks best for printing
-                        
-                        const innerContainer = clonedReport.querySelector('.report-preview-container');
-                        if (innerContainer) {
-                            // Force desktop width for PDF generation on mobile
-                            innerContainer.style.width = '800px';
-                            innerContainer.style.maxWidth = '800px';
-                            innerContainer.style.margin = '0 auto';
-                            innerContainer.style.padding = '1.5rem 2rem'; // Reduced vertical padding
-                        }
-                        
-                        // Reduce margins on sections to save vertical space so it fills the A4 width perfectly
-                        clonedReport.querySelectorAll('.report-info-section, .parameters-table, .recommendations-section').forEach(el => {
-                            el.style.marginBottom = '1rem';
-                        });
-                        const header = clonedReport.querySelector('.report-header');
-                        if (header) {
-                            header.style.marginBottom = '1rem';
-                            header.style.paddingBottom = '0.5rem';
-                        }
-                        // Logo has been removed, so no need to process it
-                        const footer = clonedReport.querySelector('.report-footer');
-                        if (footer) {
-                            footer.style.marginTop = '1.5rem';
-                            footer.style.paddingTop = '1rem';
-                        }
-                    }
-                }
+                width: 800
             });
 
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
@@ -644,9 +654,9 @@ const PDFManager = {
             const finalWidth = canvas.width * ratio;
             const finalHeight = canvas.height * ratio;
             
-            // Center it horizontally and align top vertically
+            // Center horizontally and align top
             const marginX = (pdfWidth - finalWidth) / 2;
-            const marginY = 0; // Better to align top than center vertically for reports
+            const marginY = 0; 
             
             pdf.addImage(imgData, 'JPEG', marginX, marginY, finalWidth, finalHeight);
             return pdf;
@@ -654,6 +664,11 @@ const PDFManager = {
         } catch (error) {
             console.error("PDF Generation Error:", error);
             throw error;
+        } finally {
+            // Clean up the off-screen element so it doesn't break the page
+            if (document.body.contains(offScreenContainer)) {
+                document.body.removeChild(offScreenContainer);
+            }
         }
     },
 
